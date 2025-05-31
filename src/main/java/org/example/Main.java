@@ -16,7 +16,9 @@ import org.openqa.selenium.WebDriver;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,18 +36,19 @@ public class Main {
         NewEpisodeFrame newEpisodeFrame = new NewEpisodeFrame(driver);
         EndEpisodeFrame endEpisodeFrame = new EndEpisodeFrame(driver);
         Common common = new Common(driver);
-        ArrayList<Entry> entries = common.fillEntries("main");
+        ArrayList<Entry> entries = common.fillEntries("Sheet1");
         LocalTime time = LocalTime.of(10, 0); // TODO change for variables
-
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
 
         for (int i = 0; i < entries.size(); i++) {
             Entry entry = entries.get(i);
 
             if (i > 0 && ChronoUnit.DAYS.between(entries.get(i - 1).getDate(), entry.getDate()) > 0) {
-                time = LocalTime.of(10, 0);
+                time = LocalTime.of(10, 35);
             }
 
+
+            // filling variables from table
             String name = entry.getName();
             String birthdate = common.convertDate(entry.getBirthdate());
             String tooth = entry.getTooth();
@@ -53,18 +56,20 @@ public class Main {
             List<String> procedures = Arrays.asList(entry.getProcedures().split(", "));
             LocalDate date = entry.getDate();
 
+            // search for person flow
+            System.out.printf("%s %s - started - %s%n", name, tooth, LocalTime.now());
+            LocalTime startTime = LocalTime.now();
             searchPersonPage.getSearchPage();
             searchPersonPage.enterName(name);
             searchPersonPage.enterBirthdate(birthdate);
             searchPersonPage.submitPersonSearch();
             searchPersonPage.getEpisodesPage();
 
-            episodesPage.expandFilter();
-            episodesPage.clearEpisodeName();
-            episodesPage.enterEpisodeName(diagnose, tooth);
-            episodesPage.submitEpisodeSearch();
-
-            if (common.noInitialData()) {
+            // create episode if not found
+            try
+            {
+                episodesPage.searchEpisode2(diagnose, tooth);
+            } catch (java.lang.IndexOutOfBoundsException e) {
                 episodesPage.getNewEpisodeFrame();
                 newEpisodeFrame.enterEpisodeDiagnose(diagnose);
                 if (!Arrays.asList(Strings.diagnosesWithoutTooth).contains(diagnose)) {
@@ -78,20 +83,23 @@ public class Main {
                 newEpisodeFrame.syncNewEpisode();
 
                 driver.navigate().refresh();
-                episodesPage.expandFilter();
-                episodesPage.clearEpisodeName();
-                episodesPage.submitEpisodeSearch();
+                episodesPage.searchEpisode2(diagnose, tooth);
             }
 
-            episodesPage.openDropdownMenu();
-            episodesPage.getEncountersPage();
+
+            // check if encounter is first
             boolean isFirstEncounter = common.noInitialData();
+            System.out.println(isFirstEncounter);
             encountersPage.getNewEncounterPage();
 
+
+            // new encounter creation flow
             newEncounterPage.enterEncounterDatetime(procedures, date, time);
             newEncounterPage.selectEncounterReason(diagnose);
             newEncounterPage.selectOperation();
-            if (!common.isAdult(birthdate)) {
+
+            boolean isAdult = common.isAdult(birthdate);
+            if (!isAdult) {
                 newEncounterPage.changePriority();
             }
 
@@ -100,9 +108,11 @@ public class Main {
                 newEncounterPage.selectNewDiagnose(diagnose);
             }
 
-            newEncounterPage.navToProceduresTab();
+            if (!procedures.get(0).equals("0")) {
+                newEncounterPage.navToProceduresTab();
 
-            time = newEncounterPage.fillInProcedures(procedures, date, time, isFirstEncounter);
+                time = newEncounterPage.fillInProcedures(procedures, date, time, isFirstEncounter, isAdult);
+            }
 
             newEncounterPage.saveEncounter();
             newEncounterPage.proceedToSync();
@@ -115,20 +125,24 @@ public class Main {
             if (!needToPass) {
                 driver.navigate().back();
                 driver.navigate().back();
+                driver.navigate().back();
                 driver.navigate().refresh();
 
-                episodesPage.expandFilter();
-                episodesPage.submitEpisodeSearch();
-
-                episodesPage.openDropdownMenu();
-                episodesPage.getEndEpisodeFrame();
+                episodesPage.getEndEpisodeFrame2(diagnose, tooth);
                 endEpisodeFrame.selectEndingReason();
                 endEpisodeFrame.enterEndingDate();
                 endEpisodeFrame.syncEndingEpisode();
 
                 driver.navigate().refresh();
             }
+
+            System.out.printf("%s %s - finished - %s [next: %s]%n", name, tooth, LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), time.format(DateTimeFormatter.ofPattern("HH:mm")));
+
+            LocalDateTime endTime = LocalDateTime.now();
+            Duration diff = Duration.between(startTime, endTime);
+            System.out.println(diff.getSeconds());
+
         }
-        driver.quit();
+//        driver.quit();
     }
 }

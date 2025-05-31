@@ -4,11 +4,11 @@ public class Strings {
     public static String username = "neo";
     public static String chromeDataDir = "--user-data-dir=/home/" + username + "/.config/google-chrome/";
     public static String chromedriverDir = "/home/" + username + "/PycharmProjects/askep-automation-main-2/chromedriver";
-    public static String tableDir = "/home/" + username + "/Documents/askep.xlsx";
+    public static String tableDir = "/home/" + username + "/Documents/askep_sorted.xlsx";
     public static String dbDir = "/home/" + username + "/Documents/db.xlsx";
 
     public static String[] diagnosesWithoutTooth = {"K03.6", "Z01.2"};
-    public static String[] doNotEnd = {"K04.0", "K04.4", "K04.5", "K04.8", "K05.2", "K05.3", "K08.81", "K03.9"};
+    public static String[] doNotEnd = {"K04.0", "K04.4", "K04.5", "K04.8", "K05.2", "K05.3", "K08.81", "K03.9", "K02.5", "Z01.2"};
     public static String[] restorations = {"97521", "97522", "97523", "97524", "97525", "97531",
             "97532", "97533", "97534", "97535", "97322", "97322-00"};
 

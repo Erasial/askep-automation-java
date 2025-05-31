@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -55,37 +56,8 @@ public class NewEncounterPage {
     private void enterProcedureDatetime(int procedureTimeID, LocalDate date, LocalTime time)
     {
         WebElement datetimeInput = driver.findElement(By.id("input-" + procedureTimeID));
-
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("arguments[0].removeAttribute('readonly')",
-                new WebDriverWait(driver, Duration.ofSeconds(10)).until(
-                        ExpectedConditions.elementToBeClickable(datetimeInput)
-                ));
-
-        datetimeInput.sendKeys(Keys.CONTROL + "a");
-        datetimeInput.sendKeys(Keys.DELETE);
-        datetimeInput.sendKeys(date.toString() + " " + time.getHour());
-        datetimeInput.sendKeys(":0");
-
-
-
-        datetimeInput.click();
-
-        WebElement timeInputButton = common.findLast(NewEncounterPageLocators.timeInputButtonXpath);
-        new WebDriverWait(driver, Duration.ofSeconds(10)).until(
-                ExpectedConditions.elementToBeClickable(timeInputButton)
-        );
-
-        timeInputButton.click();
-
-        WebElement minuteCircleButton = common.findLast(By.xpath("//div[@class='v-picker__title__btn']"));
-        minuteCircleButton.click();
-
-        WebElement minuteSelect = common.findLast(By.xpath("//span[text() = " + time.getMinute() + "]")); // TODO prevent converting minutes to int
-        minuteSelect.click();
-
-        WebElement timeOKButton = common.findLast(By.xpath("//span[text() = 'Ок']"));
-        timeOKButton.click();
+        String rightDate = common.convertDate(date.toString()).replace(".", "") + time.toString().replace(":", "");
+        datetimeInput.sendKeys(rightDate);
     }
 
     private void enterProcedureCode(int procedureInputID, String procedure)
@@ -97,73 +69,21 @@ public class NewEncounterPage {
     private void enterProcedureResult(int procedureResultID)
     {
         driver.findElement(By.id("input-" + procedureResultID)).click();
-        new WebDriverWait(driver, Duration.ofSeconds(10)).until(
-                ExpectedConditions.elementToBeClickable(common.findLast(NewEncounterPageLocators.procedureSuccessButtonXpath))
+        new WebDriverWait(driver, Duration.ofSeconds(3)).until(
+                ExpectedConditions.visibilityOfElementLocated(NewEncounterPageLocators.procedureSuccessButtonXpath)
         );
 
         common.findLast(NewEncounterPageLocators.procedureSuccessButtonXpath).click();
 
     }
 
-    private void checkForPOOO()
-    {
-        if (driver.findElement(By.xpath("//li[contains(text(), 'Packets out of order')]")).isDisplayed()) {
-            driver.findElement(By.xpath("/html/body/div[5]/div/div[3]/button[1]")).click();
-        }
 
-        new WebDriverWait(driver, Duration.ofSeconds(10)).until(
-                ExpectedConditions.elementToBeClickable(driver.findElement(NewEncounterPageLocators.saveButtonXpath))
-        );
-
-        driver.findElement(NewEncounterPageLocators.saveButtonXpath).click();
-
-        new WebDriverWait(driver, Duration.ofSeconds(10)).until(
-                ExpectedConditions.visibilityOfElementLocated(
-                        By.xpath("//*[contains(text(), 'Взаємодію успішно створено')]")
-                )
-        );
-
-    }
 
     public void enterEncounterDatetime( List<String> proceduresList, LocalDate date, LocalTime time)
     {
         WebElement datetimeInput = driver.findElement(NewEncounterPageLocators.dateInputId);
-
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("arguments[0].removeAttribute('readonly')",
-                new WebDriverWait(driver, Duration.ofSeconds(10)).until(
-                        ExpectedConditions.elementToBeClickable(datetimeInput)
-                ));
-
-        datetimeInput.sendKeys(Keys.CONTROL + "a");
-        datetimeInput.sendKeys(Keys.DELETE);
-        datetimeInput.sendKeys(date.toString() + " " + time.getHour());
-        datetimeInput.sendKeys(":0");
-
-        datetimeInput.click();
-
-        WebElement dayButton = driver.findElement(NewEncounterPageLocators.dayButtonXpath);
-        new WebDriverWait(driver, Duration.ofSeconds(10)).until(
-                ExpectedConditions.elementToBeClickable(dayButton)
-        );
-
-        dayButton.click();
-
-        new WebDriverWait(driver, Duration.ofSeconds(10)).until(
-                ExpectedConditions.elementToBeClickable(
-                        driver.findElement(By.xpath("//*[@id='app']/div[2]/div/div[1]/" +
-                                "div/div[2]/div/div[2]/div/div[1]/div/div/div[2]")))
-        );
-
-        Actions actions = new Actions(driver);
-        actions.moveToElement(common.findLast(By.xpath("//span[text() = " + time.getHour() + "]")))
-                .moveByOffset(3, 3)
-                .click()
-                .perform();
-
-        common.findLast(By.xpath("//span[text() = " + time.getMinute() + "]")).click(); // TODO prevent converting minutes to int
-
-        driver.findElement(NewEncounterPageLocators.confirmTimeButtonXpath).click();
+        String rightDate = common.convertDate(date.toString()).replace(".", "") + time.toString().replace(":", "");
+        datetimeInput.sendKeys(rightDate);
 
         int duration = 0;
 
@@ -179,6 +99,7 @@ public class NewEncounterPage {
             }
         }
 
+        driver.findElement(NewEncounterPageLocators.durationInputId).click();
         driver.findElement(NewEncounterPageLocators.durationInputId).sendKeys(String.valueOf(duration));
 
     }
@@ -193,19 +114,15 @@ public class NewEncounterPage {
         }
 
         driver.findElement(NewEncounterPageLocators.reasonInputId).sendKeys(reason);
-
         driver.findElement(By.xpath("//span[contains(text(), '" + reason + "')]")).click();
+        driver.findElement(NewEncounterPageLocators.reasonInputId).sendKeys(Keys.ESCAPE);
     }
 
     public void selectOperation()
     {
-        String operation = "D67007";
+        driver.findElement(NewEncounterPageLocators.operationInputId).sendKeys("D67007");
+        driver.findElement(By.xpath("//span[contains(text(), '" + "D67007" + "')]")).click();
 
-        driver.findElement(NewEncounterPageLocators.operationInputId).sendKeys(operation);
-
-        driver.findElement(By.xpath("//span[contains(text(), '" + operation + "')]")).click();
-
-        Actions actions = new Actions(driver);
         driver.findElement(NewEncounterPageLocators.operationInputId).sendKeys(Keys.ESCAPE);
     }
 
@@ -228,10 +145,29 @@ public class NewEncounterPage {
 
     public void selectNewDiagnose(String diagnose)
     {
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(
+                ExpectedConditions.elementToBeClickable(
+                        NewEncounterPageLocators.diagnoseTypeSelectId)
+        );
+
         driver.findElement(NewEncounterPageLocators.diagnoseTypeSelectId).click();
-        driver.findElement(NewEncounterPageLocators.newDiagnoseSelectXpath).click();
-        driver.findElement(NewEncounterPageLocators.newDiagnoseInputId).click();
+        try {
+            driver.findElement(NewEncounterPageLocators.newDiagnoseSelectXpath).click();
+        } catch (NoSuchElementException e) {
+            driver.findElement(NewEncounterPageLocators.diagnoseTypeSelectId).click();
+        }
+
+        try {
+            driver.findElement(NewEncounterPageLocators.newDiagnoseInputXpath).sendKeys(diagnose);
+        } catch (NoSuchElementException e) {
+            driver.findElement(NewEncounterPageLocators.newDiagnoseSelectXpath).click();
+            driver.findElement(NewEncounterPageLocators.newDiagnoseInputXpath).sendKeys(diagnose);
+        }
+
         driver.findElement(By.xpath("//span[contains(text(), '" + diagnose + "')]")).click();
+
+        Actions actions = new Actions(driver);
+        actions.scrollByAmount(0, 100).perform();
     }
 
     public void navToProceduresTab()
@@ -239,23 +175,31 @@ public class NewEncounterPage {
         WebElement proceduresTab = driver.findElement(NewEncounterPageLocators.proceduresTabLinkXpath);
         Actions actions = new Actions(driver);
         actions.scrollToElement(proceduresTab).perform();
+        driver.findElements(By.xpath("//i[@class='v-icon notranslate mdi mdi-chevron-right theme--light']")).get(2).click();
         proceduresTab.click();
     }
 
-    public LocalTime fillInProcedures(List<String> proceduresList, LocalDate date, LocalTime time, boolean isFirstEncounter)
+    public LocalTime fillInProcedures(List<String> proceduresList, LocalDate date, LocalTime time, boolean isFirstEncounter, boolean isAdult)
     {
         int procedureInputID, procedureResultID, procedureTimeID, procedureDurationID;
 
         if (isFirstEncounter) {
-            procedureInputID = 499;
-            procedureResultID = 523;
-            procedureTimeID = 576;
-            procedureDurationID = 581;
+            procedureInputID = 555;
+            procedureResultID = 579;
+            procedureTimeID = 654;
+            procedureDurationID = 659;
         } else {
-            procedureInputID = 396;
-            procedureResultID = 420;
-            procedureTimeID = 473;
-            procedureDurationID = 478;
+            procedureInputID = 433;
+            procedureResultID = 457;
+            procedureTimeID = 532;
+            procedureDurationID = 537;
+        }
+
+        if (!isAdult) {
+            procedureInputID += 7;
+            procedureResultID += 7;
+            procedureTimeID += 7;
+            procedureDurationID += 7;
         }
 
         for (int i = 0; i < proceduresList.size(); i++) {
@@ -278,20 +222,24 @@ public class NewEncounterPage {
             time = time.plusMinutes(calculateTime(procedure));
 
             int duration = calculateTime(procedure);
-            driver.findElement(By.id("input-" + procedureDurationID)).sendKeys(String.valueOf(duration));
+
+            WebElement durationInput = driver.findElement(By.id("input-" + procedureDurationID));
+            durationInput.sendKeys(Keys.CONTROL + "a");
+            durationInput.sendKeys(Keys.DELETE);
+            durationInput.sendKeys(String.valueOf(duration));
 
             scrollToNextProcedure(i, proceduresList);
 
             if (i == 0) {
-                procedureInputID += 231;
-                procedureResultID += 231;
-                procedureTimeID += 231;
-                procedureDurationID += 231;
+                procedureInputID += 241;
+                procedureResultID += 241;
+                procedureTimeID += 241;
+                procedureDurationID += 241;
             } else {
-                procedureInputID += 229;
-                procedureResultID += 229;
-                procedureTimeID += 229;
-                procedureDurationID += 229;
+                procedureInputID += 233;
+                procedureResultID += 233;
+                procedureTimeID += 233;
+                procedureDurationID += 233;
             }
         }
 
@@ -303,28 +251,49 @@ public class NewEncounterPage {
     {
         driver.findElement(NewEncounterPageLocators.saveButtonXpath).click();
 
-        try {
-            new WebDriverWait(driver, Duration.ofSeconds(5)).until(
-                    ExpectedConditions.visibilityOfElementLocated(
-                            By.xpath("//*[contains(text(), 'Взаємодію успішно створено')]"))
-            );
-        } catch (TimeoutException e) {
-            checkForPOOO();
-        }
+
 
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(
                 ExpectedConditions.visibilityOfElementLocated(
+                        By.xpath("//*[contains(text(), 'Взаємодію успішно створено')]"))
+        );
+
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(
+                ExpectedConditions.invisibilityOfElementLocated(
                         By.xpath("//*[contains(text(), 'Взаємодію успішно створено')]"))
         );
     }
 
     public void proceedToSync()
     {
+        WebElement elem = driver.findElement(NewEncounterPageLocators.proceedToSyncButtonXpath);
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(
                 ExpectedConditions.elementToBeClickable(
-                        driver.findElement(NewEncounterPageLocators.proceedToSyncButtonXpath))
+                        elem))
+        ;
+
+        elem.click();
+
+        driver.findElement(By.xpath("//*[text()='Продовжити']")).click();
+    }
+
+    public void openTemplatesMenu()
+    {
+        driver.findElement(NewEncounterPageLocators.templatesButtonXpath).click();
+    }
+
+    public void applyXrayTemplate()
+    {
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(
+                ExpectedConditions.elementToBeClickable(
+                        driver.findElement(NewEncounterPageLocators.applyXrayTemplate))
         );
 
-        driver.findElement(NewEncounterPageLocators.proceedToSyncButtonXpath).click();
+        driver.findElement(NewEncounterPageLocators.applyXrayTemplate).click();
+
+        new WebDriverWait(driver, Duration.ofSeconds(3)).until(
+                ExpectedConditions.invisibilityOfElementLocated(
+                        By.xpath("//*[@class='swal2-container swal2-center swal2-backdrop-show']"))
+        );
     }
 }

@@ -37,7 +37,7 @@ public class CommonTest {
 
     @Test
     void fillEntriesTest() {
-        ArrayList<Entry> entries = fillEntries("main");
+        ArrayList<Entry> entries = fillEntries("oi");
         for (Entry entry : entries) {
             System.out.print(entry.getName() + " " +
                     entry.getBirthdate() + " " +

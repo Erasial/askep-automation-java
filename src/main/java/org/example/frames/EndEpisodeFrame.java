@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class EndEpisodeFrame {
     private final WebDriver driver;
@@ -31,11 +32,10 @@ public class EndEpisodeFrame {
 
     public void enterEndingDate() {
         LocalDateTime dt = LocalDateTime.now();
-        dt = dt.minusMinutes(10);
+        dt = dt.minusMinutes(30);
 
-        driver.findElements(EndEpisodeFrameLocators.dateInputClass)
-                .get(6)
-                .sendKeys(dt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")));
+        List<WebElement> list = driver.findElements(EndEpisodeFrameLocators.dateInputClass);
+        list.get(list.size() - 2).sendKeys(dt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")));
     }
 
     public void syncEndingEpisode() {

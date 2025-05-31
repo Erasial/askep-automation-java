@@ -4,6 +4,6 @@ import org.openqa.selenium.By;
 
 public class SyncFrameLocators {
     public static By successAlertClass = By.className("success--text");
-    public static By syncDataButtonClass = By.className("mb-3");
+    public static By syncDataButtonXpath = By.xpath("//button[@class='mb-3 v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary']");
     public static By goToEpisodes = By.xpath("//span[contains(text(), 'Перейти до амбулаторних епізодів пацієнта')]");
 }

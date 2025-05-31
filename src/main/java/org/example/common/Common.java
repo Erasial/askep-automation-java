@@ -6,10 +6,9 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.ss.formula.functions.Days;
 import org.apache.poi.ss.usermodel.CellType;
 import org.example.locators.CommonLocators;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.example.locators.EncountersPageLocators;
+import org.openqa.selenium.*;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.time.LocalDate;
@@ -23,6 +22,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
@@ -138,13 +139,18 @@ public class Common {
 
     public boolean noInitialData() {
         try {
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(0));
-            driver.findElement(CommonLocators.noDataTextClass);
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+//            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1));
+//            driver.findElement(CommonLocators.noDataTextXpath);
+//            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+
+            new WebDriverWait(driver, Duration.ofSeconds(1)).until(
+                    ExpectedConditions.visibilityOfElementLocated(
+                            CommonLocators.noDataTextXpath)
+            );
             return true;
         }
-        catch (NoSuchElementException e) {
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+        catch (TimeoutException e) {
+//            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
             return false;
         }
     }
