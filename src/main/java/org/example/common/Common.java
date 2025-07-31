@@ -139,10 +139,6 @@ public class Common {
 
     public boolean noInitialData() {
         try {
-//            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1));
-//            driver.findElement(CommonLocators.noDataTextXpath);
-//            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
-
             new WebDriverWait(driver, Duration.ofSeconds(1)).until(
                     ExpectedConditions.visibilityOfElementLocated(
                             CommonLocators.noDataTextXpath)
@@ -150,7 +146,6 @@ public class Common {
             return true;
         }
         catch (TimeoutException e) {
-//            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
             return false;
         }
     }

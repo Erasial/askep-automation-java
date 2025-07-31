@@ -13,6 +13,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import org.openqa.selenium.interactions.Actions;
 
 import org.example.common.Common;
 
@@ -24,6 +25,13 @@ public class NewEncounterPage {
     public NewEncounterPage(WebDriver driver) {
         this.driver = driver;
         this.common = new Common(driver);
+    }
+
+    public void clickWithDot(WebElement el, int xOff, int yOff) {
+        new Actions(driver)
+                .moveToElement(el, xOff, yOff)
+                .click()
+                .perform();
     }
 
     private int calculateTime(String procedure) {
@@ -53,22 +61,21 @@ public class NewEncounterPage {
         }
     }
 
-    private void enterProcedureDatetime(int procedureTimeID, LocalDate date, LocalTime time)
+    private void enterProcedureDatetime(WebElement procedureTime, LocalDate date, LocalTime time)
     {
-        WebElement datetimeInput = driver.findElement(By.id("input-" + procedureTimeID));
         String rightDate = common.convertDate(date.toString()).replace(".", "") + time.toString().replace(":", "");
-        datetimeInput.sendKeys(rightDate);
+        procedureTime.sendKeys(rightDate);
     }
 
-    private void enterProcedureCode(int procedureInputID, String procedure)
+    private void enterProcedureCode(WebElement procedureInput, String procedure)
     {
-        driver.findElement(By.id("input-" + procedureInputID)).sendKeys(procedure);
+        procedureInput.sendKeys(procedure);
         driver.findElement(By.xpath("//span[contains(text(), '" + procedure + "')]")).click();
     }
 
-    private void enterProcedureResult(int procedureResultID)
+    private void enterProcedureResult(WebElement procedureResult)
     {
-        driver.findElement(By.id("input-" + procedureResultID)).click();
+        procedureResult.click();
         new WebDriverWait(driver, Duration.ofSeconds(3)).until(
                 ExpectedConditions.visibilityOfElementLocated(NewEncounterPageLocators.procedureSuccessButtonXpath)
         );
@@ -76,8 +83,6 @@ public class NewEncounterPage {
         common.findLast(NewEncounterPageLocators.procedureSuccessButtonXpath).click();
 
     }
-
-
 
     public void enterEncounterDatetime( List<String> proceduresList, LocalDate date, LocalTime time)
     {
@@ -151,18 +156,30 @@ public class NewEncounterPage {
         );
 
         driver.findElement(NewEncounterPageLocators.diagnoseTypeSelectId).click();
-        try {
-            driver.findElement(NewEncounterPageLocators.newDiagnoseSelectXpath).click();
-        } catch (NoSuchElementException e) {
-            driver.findElement(NewEncounterPageLocators.diagnoseTypeSelectId).click();
-        }
+        driver.findElement(NewEncounterPageLocators.newDiagnoseSelectXpath).click();
 
-        try {
-            driver.findElement(NewEncounterPageLocators.newDiagnoseInputXpath).sendKeys(diagnose);
-        } catch (NoSuchElementException e) {
-            driver.findElement(NewEncounterPageLocators.newDiagnoseSelectXpath).click();
-            driver.findElement(NewEncounterPageLocators.newDiagnoseInputXpath).sendKeys(diagnose);
-        }
+        driver.findElement(By.xpath("/html/body/div[2]/main/div[3]/div/div/div[4]/div/div[3]/div/div[2]/div/div/form/div/div[2]/div[1]/div/div/button/div[1]")).click();
+        new WebDriverWait(driver, Duration.ofSeconds(5)).until(
+                ExpectedConditions.elementToBeClickable(
+                        By.xpath("/html/body/div[2]/main/div[3]/div[1]/div/div[4]/div/div[3]/div/div[2]/div/div/form/div/div[2]/div[1]/div/div/div/div/div/div/div[2]/div/div[1]/div[1]/div[1]/input"))
+        );
+        driver.findElement(By.xpath("/html/body/div[2]/main/div[3]/div[1]/div/div[4]/div/div[3]/div/div[2]/div/div/form/div/div[2]/div[1]/div/div/div/div/div/div/div[2]/div/div[1]/div[1]/div[1]/input")).click();
+        driver.findElement(NewEncounterPageLocators.newDiagnoseSelectXpath).click();
+
+        driver.findElement(NewEncounterPageLocators.newDiagnoseInputXpath).sendKeys(diagnose);
+//        try {
+//            driver.findElement(NewEncounterPageLocators.newDiagnoseSelectXpath).click();
+//        } catch (NoSuchElementException e) {
+//            System.out.println("cathed no new diagnose button");
+//            driver.findElement(NewEncounterPageLocators.diagnoseTypeSelectId).click();
+//        }
+//
+//        try {
+//            driver.findElement(NewEncounterPageLocators.newDiagnoseInputXpath).sendKeys(diagnose);
+//        } catch (NoSuchElementException e) {
+//            driver.findElement(NewEncounterPageLocators.newDiagnoseSelectXpath).click();
+//            driver.findElement(NewEncounterPageLocators.newDiagnoseInputXpath).sendKeys(diagnose);
+//        }
 
         driver.findElement(By.xpath("//span[contains(text(), '" + diagnose + "')]")).click();
 
@@ -181,66 +198,40 @@ public class NewEncounterPage {
 
     public LocalTime fillInProcedures(List<String> proceduresList, LocalDate date, LocalTime time, boolean isFirstEncounter, boolean isAdult)
     {
-        int procedureInputID, procedureResultID, procedureTimeID, procedureDurationID;
-
-        if (isFirstEncounter) {
-            procedureInputID = 555;
-            procedureResultID = 579;
-            procedureTimeID = 654;
-            procedureDurationID = 659;
-        } else {
-            procedureInputID = 433;
-            procedureResultID = 457;
-            procedureTimeID = 532;
-            procedureDurationID = 537;
-        }
-
-        if (!isAdult) {
-            procedureInputID += 7;
-            procedureResultID += 7;
-            procedureTimeID += 7;
-            procedureDurationID += 7;
-        }
-
         for (int i = 0; i < proceduresList.size(); i++) {
+            WebElement procedureInput, procedureResult, procedureTime, procedureDuration;
+
+            procedureInput = driver.findElements(By.xpath("//div[text()='Медична послуга']/../..//input[@placeholder='Оберіть']")).get(i);
+            procedureResult = driver.findElement(By.xpath("//div[text()='Результат проведення процедури']/..//input[@placeholder='Оберіть']"));
+            procedureTime = driver.findElements(By.xpath("//div[contains(text(), 'Період проведення (від)')]/..//input")).get(i);
+            procedureDuration = driver.findElements(By.xpath("//div[text()='Тривалість']/..//input")).get(i + 1);
+
             String procedure = proceduresList.get(i);
             if (procedure.equals("97322")) {
                 procedure = "97322-00";
             }
 
-            enterProcedureCode(procedureInputID, procedure);
+            enterProcedureCode(procedureInput, procedure);
 
             Actions actions = new Actions(driver);
             actions.scrollByAmount(0, 400).perform();
 
-            enterProcedureResult(procedureResultID);
+            enterProcedureResult(procedureResult);
 
             actions.scrollByAmount(0, 400).perform();
 
-            enterProcedureDatetime(procedureTimeID, date, time);
+            enterProcedureDatetime(procedureTime, date, time);
 
             time = time.plusMinutes(calculateTime(procedure));
 
             int duration = calculateTime(procedure);
 
-            WebElement durationInput = driver.findElement(By.id("input-" + procedureDurationID));
+            WebElement durationInput = procedureDuration;
             durationInput.sendKeys(Keys.CONTROL + "a");
             durationInput.sendKeys(Keys.DELETE);
             durationInput.sendKeys(String.valueOf(duration));
 
             scrollToNextProcedure(i, proceduresList);
-
-            if (i == 0) {
-                procedureInputID += 241;
-                procedureResultID += 241;
-                procedureTimeID += 241;
-                procedureDurationID += 241;
-            } else {
-                procedureInputID += 233;
-                procedureResultID += 233;
-                procedureTimeID += 233;
-                procedureDurationID += 233;
-            }
         }
 
         time = time.plusMinutes(5);
@@ -250,13 +241,31 @@ public class NewEncounterPage {
     public void saveEncounter()
     {
         driver.findElement(NewEncounterPageLocators.saveButtonXpath).click();
-
-
-
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(
                 ExpectedConditions.visibilityOfElementLocated(
                         By.xpath("//*[contains(text(), 'Взаємодію успішно створено')]"))
         );
+
+//        try {
+//            new WebDriverWait(driver, Duration.ofSeconds(5)).until(
+//                    ExpectedConditions.visibilityOfElementLocated(
+//                            By.xpath("//*[contains(text(), 'Взаємодію успішно створено')]"))
+//            );
+//        } catch (TimeoutException e) {
+//            if (driver.findElement(By.xpath("//li[contains(text(), 'General error: 2006')]")).isDisplayed()) {
+//                driver.findElement(By.xpath("//button[text()='OK']")).click();
+//            }
+//
+//            WebElement elem = driver.findElement(NewEncounterPageLocators.proceedToSyncButtonXpath);
+//            new WebDriverWait(driver, Duration.ofSeconds(5)).until(
+//                    ExpectedConditions.elementToBeClickable(
+//                            elem))
+//            ;
+//
+//            elem.click();
+//
+//            driver.findElement(By.xpath("//*[text()='Продовжити']")).click();
+//        }
 
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(
                 ExpectedConditions.invisibilityOfElementLocated(
@@ -275,25 +284,5 @@ public class NewEncounterPage {
         elem.click();
 
         driver.findElement(By.xpath("//*[text()='Продовжити']")).click();
-    }
-
-    public void openTemplatesMenu()
-    {
-        driver.findElement(NewEncounterPageLocators.templatesButtonXpath).click();
-    }
-
-    public void applyXrayTemplate()
-    {
-        new WebDriverWait(driver, Duration.ofSeconds(5)).until(
-                ExpectedConditions.elementToBeClickable(
-                        driver.findElement(NewEncounterPageLocators.applyXrayTemplate))
-        );
-
-        driver.findElement(NewEncounterPageLocators.applyXrayTemplate).click();
-
-        new WebDriverWait(driver, Duration.ofSeconds(3)).until(
-                ExpectedConditions.invisibilityOfElementLocated(
-                        By.xpath("//*[@class='swal2-container swal2-center swal2-backdrop-show']"))
-        );
     }
 }

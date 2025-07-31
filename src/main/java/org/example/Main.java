@@ -28,6 +28,8 @@ public class Main {
     public static void main(String[] args) {
         WebDriver driver = new DriverInit().driver;
 
+        System.out.println("testpoint");
+
         SearchPersonPage searchPersonPage = new SearchPersonPage(driver);
         EpisodesPage episodesPage = new EpisodesPage(driver);
         EncountersPage encountersPage = new EncountersPage(driver);
@@ -36,15 +38,17 @@ public class Main {
         NewEpisodeFrame newEpisodeFrame = new NewEpisodeFrame(driver);
         EndEpisodeFrame endEpisodeFrame = new EndEpisodeFrame(driver);
         Common common = new Common(driver);
+
         ArrayList<Entry> entries = common.fillEntries("Sheet1");
-        LocalTime time = LocalTime.of(10, 0); // TODO change for variables
+        LocalTime time = LocalTime.of(15, 15); // TODO change for variables
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+
 
         for (int i = 0; i < entries.size(); i++) {
             Entry entry = entries.get(i);
 
             if (i > 0 && ChronoUnit.DAYS.between(entries.get(i - 1).getDate(), entry.getDate()) > 0) {
-                time = LocalTime.of(10, 35);
+                time = LocalTime.of(10, 0);
             }
 
 
@@ -86,12 +90,10 @@ public class Main {
                 episodesPage.searchEpisode2(diagnose, tooth);
             }
 
-
             // check if encounter is first
             boolean isFirstEncounter = common.noInitialData();
             System.out.println(isFirstEncounter);
             encountersPage.getNewEncounterPage();
-
 
             // new encounter creation flow
             newEncounterPage.enterEncounterDatetime(procedures, date, time);
