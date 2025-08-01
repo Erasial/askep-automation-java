@@ -1,15 +1,12 @@
 package org.example.common;
 
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import java.io.File;
-
 public class DriverInit {
 
-    public ChromeDriver driver;
+    public final ChromeDriver driver;
 
     public DriverInit() {
         ChromeOptions options = new ChromeOptions();

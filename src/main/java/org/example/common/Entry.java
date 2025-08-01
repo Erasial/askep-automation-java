@@ -1,7 +1,6 @@
 package org.example.common;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class Entry {
     private final String name;

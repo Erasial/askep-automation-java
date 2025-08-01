@@ -1,7 +1,6 @@
 package org.example.pages;
 
 import org.example.locators.EncountersPageLocators;
-import org.example.locators.NewEncounterPageLocators;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -24,9 +23,11 @@ public class EncountersPage {
 
         driver.findElement(EncountersPageLocators.getNewEncounterPageButtonLinkText).click();
 
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(0));
         if (!driver.findElements(By.xpath("//div[contains(text(), 'Пацієнт перебуває на стаціонарному лікуванні')]")).isEmpty()) {
             driver.findElement(By.xpath("//button[text() = 'Так']")).click();
         }
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1));
     }
 }
 

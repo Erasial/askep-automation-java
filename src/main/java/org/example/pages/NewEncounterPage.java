@@ -10,10 +10,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
-import org.openqa.selenium.interactions.Actions;
 
 import org.example.common.Common;
 
@@ -27,23 +25,15 @@ public class NewEncounterPage {
         this.common = new Common(driver);
     }
 
-    public void clickWithDot(WebElement el, int xOff, int yOff) {
-        new Actions(driver)
-                .moveToElement(el, xOff, yOff)
-                .click()
-                .perform();
-    }
-
     private int calculateTime(String procedure) {
-        if (Arrays.asList(Strings.min5).contains(procedure)) {
+        if (Arrays.asList(Strings.min5).contains(procedure))
             return 5;
-        } else if (Arrays.asList(Strings.min10).contains(procedure)) {
+        else if (Arrays.asList(Strings.min10).contains(procedure))
             return 10;
-        } else if (Arrays.asList(Strings.min20).contains(procedure)) {
+        else if (Arrays.asList(Strings.min20).contains(procedure))
             return 20;
-        } else {
+        else
             return 30;
-        }
     }
 
     private void scrollToNextProcedure(int i, List<String> proceduresList)
@@ -54,8 +44,7 @@ public class NewEncounterPage {
             driver.findElement(NewEncounterPageLocators.addProcedureButtonXpath).click();
 
             new WebDriverWait(driver, Duration.ofSeconds(10)).until(
-                    ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(text(), 'Процедура №" + (i + 2) + "')]"))
-            );
+                    ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(text(), 'Процедура №" + (i + 2) + "')]")));
 
             actions.scrollByAmount(0, 100).perform();
         }
@@ -75,10 +64,12 @@ public class NewEncounterPage {
 
     private void enterProcedureResult(WebElement procedureResult)
     {
+        new WebDriverWait(driver, Duration.ofSeconds(3)).until(
+                ExpectedConditions.visibilityOf(procedureResult));
+
         procedureResult.click();
         new WebDriverWait(driver, Duration.ofSeconds(3)).until(
-                ExpectedConditions.visibilityOfElementLocated(NewEncounterPageLocators.procedureSuccessButtonXpath)
-        );
+                ExpectedConditions.visibilityOfElementLocated(NewEncounterPageLocators.procedureSuccessButtonXpath));
 
         common.findLast(NewEncounterPageLocators.procedureSuccessButtonXpath).click();
 
@@ -93,15 +84,14 @@ public class NewEncounterPage {
         int duration = 0;
 
         for (String procedure : proceduresList) {
-            if (Arrays.asList(Strings.min5).contains(procedure)) {
+            if (Arrays.asList(Strings.min5).contains(procedure))
                 duration += 5;
-            } else if (Arrays.asList(Strings.min10).contains(procedure)) {
+            else if (Arrays.asList(Strings.min10).contains(procedure))
                 duration += 10;
-            } else if (Arrays.asList(Strings.min20).contains(procedure)) {
+            else if (Arrays.asList(Strings.min20).contains(procedure))
                 duration += 20;
-            } else {
+            else
                 duration += 30;
-            }
         }
 
         driver.findElement(NewEncounterPageLocators.durationInputId).click();
@@ -112,11 +102,10 @@ public class NewEncounterPage {
     public void selectEncounterReason(String diagnose)
     {
         String reason;
-        if (diagnose.equals("Z01.2")) {
+        if (diagnose.equals("Z01.2"))
             reason = "D31";
-        } else {
+        else
             reason = "D82";
-        }
 
         driver.findElement(NewEncounterPageLocators.reasonInputId).sendKeys(reason);
         driver.findElement(By.xpath("//span[contains(text(), '" + reason + "')]")).click();
@@ -126,6 +115,9 @@ public class NewEncounterPage {
     public void selectOperation()
     {
         driver.findElement(NewEncounterPageLocators.operationInputId).sendKeys("D67007");
+        new WebDriverWait(driver, Duration.ofSeconds(3)).until(
+                ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(), '" + "D67007" + "')]")));
+
         driver.findElement(By.xpath("//span[contains(text(), '" + "D67007" + "')]")).click();
 
         driver.findElement(NewEncounterPageLocators.operationInputId).sendKeys(Keys.ESCAPE);
@@ -158,29 +150,7 @@ public class NewEncounterPage {
         driver.findElement(NewEncounterPageLocators.diagnoseTypeSelectId).click();
         driver.findElement(NewEncounterPageLocators.newDiagnoseSelectXpath).click();
 
-        driver.findElement(By.xpath("/html/body/div[2]/main/div[3]/div/div/div[4]/div/div[3]/div/div[2]/div/div/form/div/div[2]/div[1]/div/div/button/div[1]")).click();
-        new WebDriverWait(driver, Duration.ofSeconds(5)).until(
-                ExpectedConditions.elementToBeClickable(
-                        By.xpath("/html/body/div[2]/main/div[3]/div[1]/div/div[4]/div/div[3]/div/div[2]/div/div/form/div/div[2]/div[1]/div/div/div/div/div/div/div[2]/div/div[1]/div[1]/div[1]/input"))
-        );
-        driver.findElement(By.xpath("/html/body/div[2]/main/div[3]/div[1]/div/div[4]/div/div[3]/div/div[2]/div/div/form/div/div[2]/div[1]/div/div/div/div/div/div/div[2]/div/div[1]/div[1]/div[1]/input")).click();
-        driver.findElement(NewEncounterPageLocators.newDiagnoseSelectXpath).click();
-
         driver.findElement(NewEncounterPageLocators.newDiagnoseInputXpath).sendKeys(diagnose);
-//        try {
-//            driver.findElement(NewEncounterPageLocators.newDiagnoseSelectXpath).click();
-//        } catch (NoSuchElementException e) {
-//            System.out.println("cathed no new diagnose button");
-//            driver.findElement(NewEncounterPageLocators.diagnoseTypeSelectId).click();
-//        }
-//
-//        try {
-//            driver.findElement(NewEncounterPageLocators.newDiagnoseInputXpath).sendKeys(diagnose);
-//        } catch (NoSuchElementException e) {
-//            driver.findElement(NewEncounterPageLocators.newDiagnoseSelectXpath).click();
-//            driver.findElement(NewEncounterPageLocators.newDiagnoseInputXpath).sendKeys(diagnose);
-//        }
-
         driver.findElement(By.xpath("//span[contains(text(), '" + diagnose + "')]")).click();
 
         Actions actions = new Actions(driver);
@@ -196,10 +166,13 @@ public class NewEncounterPage {
         proceduresTab.click();
     }
 
-    public LocalTime fillInProcedures(List<String> proceduresList, LocalDate date, LocalTime time, boolean isFirstEncounter, boolean isAdult)
+    public LocalTime fillInProcedures(List<String> proceduresList, LocalDate date, LocalTime time)
     {
         for (int i = 0; i < proceduresList.size(); i++) {
             WebElement procedureInput, procedureResult, procedureTime, procedureDuration;
+            new WebDriverWait(driver, Duration.ofSeconds(5)).until(
+                    ExpectedConditions.visibilityOfElementLocated(
+                            By.xpath("//div[text()='Результат проведення процедури']/..//input[@placeholder='Оберіть']")));
 
             procedureInput = driver.findElements(By.xpath("//div[text()='Медична послуга']/../..//input[@placeholder='Оберіть']")).get(i);
             procedureResult = driver.findElement(By.xpath("//div[text()='Результат проведення процедури']/..//input[@placeholder='Оберіть']"));
@@ -207,9 +180,8 @@ public class NewEncounterPage {
             procedureDuration = driver.findElements(By.xpath("//div[text()='Тривалість']/..//input")).get(i + 1);
 
             String procedure = proceduresList.get(i);
-            if (procedure.equals("97322")) {
+            if (procedure.equals("97322"))
                 procedure = "97322-00";
-            }
 
             enterProcedureCode(procedureInput, procedure);
 
@@ -243,43 +215,20 @@ public class NewEncounterPage {
         driver.findElement(NewEncounterPageLocators.saveButtonXpath).click();
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(
                 ExpectedConditions.visibilityOfElementLocated(
-                        By.xpath("//*[contains(text(), 'Взаємодію успішно створено')]"))
-        );
+                        By.xpath("//*[contains(text(), 'Взаємодію успішно створено')]")));
 
-//        try {
-//            new WebDriverWait(driver, Duration.ofSeconds(5)).until(
-//                    ExpectedConditions.visibilityOfElementLocated(
-//                            By.xpath("//*[contains(text(), 'Взаємодію успішно створено')]"))
-//            );
-//        } catch (TimeoutException e) {
-//            if (driver.findElement(By.xpath("//li[contains(text(), 'General error: 2006')]")).isDisplayed()) {
-//                driver.findElement(By.xpath("//button[text()='OK']")).click();
-//            }
-//
-//            WebElement elem = driver.findElement(NewEncounterPageLocators.proceedToSyncButtonXpath);
-//            new WebDriverWait(driver, Duration.ofSeconds(5)).until(
-//                    ExpectedConditions.elementToBeClickable(
-//                            elem))
-//            ;
-//
-//            elem.click();
-//
-//            driver.findElement(By.xpath("//*[text()='Продовжити']")).click();
-//        }
-
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(0));
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(
                 ExpectedConditions.invisibilityOfElementLocated(
-                        By.xpath("//*[contains(text(), 'Взаємодію успішно створено')]"))
-        );
+                        By.xpath("//*[contains(text(), 'Взаємодію успішно створено')]")));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1));
     }
 
     public void proceedToSync()
     {
         WebElement elem = driver.findElement(NewEncounterPageLocators.proceedToSyncButtonXpath);
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(
-                ExpectedConditions.elementToBeClickable(
-                        elem))
-        ;
+                ExpectedConditions.elementToBeClickable(elem));
 
         elem.click();
 

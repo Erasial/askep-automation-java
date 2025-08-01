@@ -1,12 +1,10 @@
 package org.example.frames;
 
 import org.example.locators.CommonLocators;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.example.locators.NewEpisodeFrameLocators;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -55,7 +53,7 @@ public class NewEpisodeFrame {
 
         new WebDriverWait(driver, Duration.ofSeconds(5)).until(
                 ExpectedConditions.visibilityOfElementLocated(
-                        By.xpath("//*[contains(text(), 'успішно вивантажено')]"))
+                        NewEpisodeFrameLocators.successMessageXpath)
         );
     }
 }

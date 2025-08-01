@@ -1,6 +1,5 @@
 package org.example;
 
-import com.google.j2objc.annotations.GenerateObjectiveCGenerics;
 import org.example.common.Common;
 import org.example.common.DriverInit;
 import org.example.common.Entry;
@@ -28,8 +27,6 @@ public class Main {
     public static void main(String[] args) {
         WebDriver driver = new DriverInit().driver;
 
-        System.out.println("testpoint");
-
         SearchPersonPage searchPersonPage = new SearchPersonPage(driver);
         EpisodesPage episodesPage = new EpisodesPage(driver);
         EncountersPage encountersPage = new EncountersPage(driver);
@@ -40,16 +37,15 @@ public class Main {
         Common common = new Common(driver);
 
         ArrayList<Entry> entries = common.fillEntries("Sheet1");
-        LocalTime time = LocalTime.of(15, 15); // TODO change for variables
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+        LocalTime time = LocalTime.of(13, 5);
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
 
 
         for (int i = 0; i < entries.size(); i++) {
             Entry entry = entries.get(i);
 
-            if (i > 0 && ChronoUnit.DAYS.between(entries.get(i - 1).getDate(), entry.getDate()) > 0) {
+            if (i > 0 && ChronoUnit.DAYS.between(entries.get(i - 1).getDate(), entry.getDate()) > 0)
                 time = LocalTime.of(10, 0);
-            }
 
 
             // filling variables from table
@@ -61,7 +57,7 @@ public class Main {
             LocalDate date = entry.getDate();
 
             // search for person flow
-            System.out.printf("%s %s - started - %s%n", name, tooth, LocalTime.now());
+            System.out.printf("%s %s - started - %s%n", name, tooth, LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
             LocalTime startTime = LocalTime.now();
             searchPersonPage.getSearchPage();
             searchPersonPage.enterName(name);
@@ -92,7 +88,6 @@ public class Main {
 
             // check if encounter is first
             boolean isFirstEncounter = common.noInitialData();
-            System.out.println(isFirstEncounter);
             encountersPage.getNewEncounterPage();
 
             // new encounter creation flow
@@ -100,10 +95,8 @@ public class Main {
             newEncounterPage.selectEncounterReason(diagnose);
             newEncounterPage.selectOperation();
 
-            boolean isAdult = common.isAdult(birthdate);
-            if (!isAdult) {
+            if (!common.isAdult(birthdate))
                 newEncounterPage.changePriority();
-            }
 
             if (isFirstEncounter) {
                 newEncounterPage.navToDiagnoseTab();
@@ -112,8 +105,7 @@ public class Main {
 
             if (!procedures.get(0).equals("0")) {
                 newEncounterPage.navToProceduresTab();
-
-                time = newEncounterPage.fillInProcedures(procedures, date, time, isFirstEncounter, isAdult);
+                time = newEncounterPage.fillInProcedures(procedures, date, time);
             }
 
             newEncounterPage.saveEncounter();

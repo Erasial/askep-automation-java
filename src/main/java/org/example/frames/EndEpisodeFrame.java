@@ -1,16 +1,13 @@
 package org.example.frames;
 
-import org.example.locators.SyncFrameLocators;
 import org.openqa.selenium.WebDriver;
 import org.example.locators.EndEpisodeFrameLocators;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;

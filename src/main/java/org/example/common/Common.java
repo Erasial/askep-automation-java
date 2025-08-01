@@ -1,18 +1,12 @@
 package org.example.common;
 
-import net.bytebuddy.asm.Advice;
-import net.bytebuddy.dynamic.scaffold.TypeInitializer;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
-import org.apache.poi.ss.formula.functions.Days;
 import org.apache.poi.ss.usermodel.CellType;
 import org.example.locators.CommonLocators;
-import org.example.locators.EncountersPageLocators;
 import org.openqa.selenium.*;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;

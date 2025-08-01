@@ -36,8 +36,6 @@ public class SyncFrame {
     }
 
     public void syncData() {
-
-
         try {
             new WebDriverWait(driver, Duration.ofSeconds(15)).until(
                     ExpectedConditions.visibilityOfElementLocated(SyncFrameLocators.syncDataButtonXpath)
