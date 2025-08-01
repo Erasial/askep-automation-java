@@ -1,22 +1,19 @@
 package org.example.frames;
 
+import org.example.pages.BasePage;
 import org.openqa.selenium.WebDriver;
 import org.example.locators.EndEpisodeFrameLocators;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class EndEpisodeFrame {
-    private final WebDriver driver;
+public class EndEpisodeFrame extends BasePage {
 
     public EndEpisodeFrame(WebDriver driver) {
-        this.driver = driver;
+        super(driver);
     }
 
     public void selectEndingReason() {
@@ -38,8 +35,6 @@ public class EndEpisodeFrame {
     public void syncEndingEpisode() {
         driver.findElement(EndEpisodeFrameLocators.syncButtonXpath).click();
 
-        new WebDriverWait(driver, Duration.ofSeconds(10)).until(
-                ExpectedConditions.visibilityOfElementLocated(EndEpisodeFrameLocators.syncSuccessAlertXpath)
-        );
+        waitVisible(EndEpisodeFrameLocators.syncSuccessAlertXpath);
     }
 }

@@ -9,11 +9,10 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 import java.util.Objects;
 
-public class EpisodesPage {
-    private final WebDriver driver;
+public class EpisodesPage extends BasePage{
 
     public EpisodesPage(WebDriver driver) {
-        this.driver = driver;
+        super(driver);
     }
 
     public void getNewEpisodeFrame() {

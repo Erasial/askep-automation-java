@@ -4,8 +4,6 @@ import org.example.common.Strings;
 import org.example.locators.NewEncounterPageLocators;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -13,16 +11,12 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 
-import org.example.common.Common;
 
+public class NewEncounterPage extends BasePage {
 
-public class NewEncounterPage {
-    private final WebDriver driver;
-    private final Common common;
 
     public NewEncounterPage(WebDriver driver) {
-        this.driver = driver;
-        this.common = new Common(driver);
+        super(driver);
     }
 
     private int calculateTime(String procedure) {
@@ -43,8 +37,7 @@ public class NewEncounterPage {
             actions.scrollByAmount(0, 800).perform();
             driver.findElement(NewEncounterPageLocators.addProcedureButtonXpath).click();
 
-            new WebDriverWait(driver, Duration.ofSeconds(10)).until(
-                    ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(text(), 'Процедура №" + (i + 2) + "')]")));
+            waitClickable(By.xpath("//span[contains(text(), 'Процедура №" + (i + 2) + "')]"));
 
             actions.scrollByAmount(0, 100).perform();
         }
@@ -64,15 +57,10 @@ public class NewEncounterPage {
 
     private void enterProcedureResult(WebElement procedureResult)
     {
-        new WebDriverWait(driver, Duration.ofSeconds(3)).until(
-                ExpectedConditions.visibilityOf(procedureResult));
-
         procedureResult.click();
-        new WebDriverWait(driver, Duration.ofSeconds(3)).until(
-                ExpectedConditions.visibilityOfElementLocated(NewEncounterPageLocators.procedureSuccessButtonXpath));
+        waitVisible(NewEncounterPageLocators.procedureSuccessButtonXpath);
 
         common.findLast(NewEncounterPageLocators.procedureSuccessButtonXpath).click();
-
     }
 
     public void enterEncounterDatetime( List<String> proceduresList, LocalDate date, LocalTime time)
@@ -115,11 +103,7 @@ public class NewEncounterPage {
     public void selectOperation()
     {
         driver.findElement(NewEncounterPageLocators.operationInputId).sendKeys("D67007");
-        new WebDriverWait(driver, Duration.ofSeconds(3)).until(
-                ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(), '" + "D67007" + "')]")));
-
-        driver.findElement(By.xpath("//span[contains(text(), '" + "D67007" + "')]")).click();
-
+        waitVisible(By.xpath("//span[contains(text(), '" + "D67007" + "')]")).click();
         driver.findElement(NewEncounterPageLocators.operationInputId).sendKeys(Keys.ESCAPE);
     }
 
@@ -142,12 +126,7 @@ public class NewEncounterPage {
 
     public void selectNewDiagnose(String diagnose)
     {
-        new WebDriverWait(driver, Duration.ofSeconds(5)).until(
-                ExpectedConditions.elementToBeClickable(
-                        NewEncounterPageLocators.diagnoseTypeSelectId)
-        );
-
-        driver.findElement(NewEncounterPageLocators.diagnoseTypeSelectId).click();
+        waitClickable(NewEncounterPageLocators.diagnoseTypeSelectId).click();
         driver.findElement(NewEncounterPageLocators.newDiagnoseSelectXpath).click();
 
         driver.findElement(NewEncounterPageLocators.newDiagnoseInputXpath).sendKeys(diagnose);
@@ -170,9 +149,7 @@ public class NewEncounterPage {
     {
         for (int i = 0; i < proceduresList.size(); i++) {
             WebElement procedureInput, procedureResult, procedureTime, procedureDuration;
-            new WebDriverWait(driver, Duration.ofSeconds(5)).until(
-                    ExpectedConditions.visibilityOfElementLocated(
-                            By.xpath("//div[text()='Результат проведення процедури']/..//input[@placeholder='Оберіть']")));
+            waitVisible(By.xpath("//div[text()='Результат проведення процедури']/..//input[@placeholder='Оберіть']"));
 
             procedureInput = driver.findElements(By.xpath("//div[text()='Медична послуга']/../..//input[@placeholder='Оберіть']")).get(i);
             procedureResult = driver.findElement(By.xpath("//div[text()='Результат проведення процедури']/..//input[@placeholder='Оберіть']"));
@@ -213,25 +190,16 @@ public class NewEncounterPage {
     public void saveEncounter()
     {
         driver.findElement(NewEncounterPageLocators.saveButtonXpath).click();
-        new WebDriverWait(driver, Duration.ofSeconds(5)).until(
-                ExpectedConditions.visibilityOfElementLocated(
-                        By.xpath("//*[contains(text(), 'Взаємодію успішно створено')]")));
+        waitVisible(By.xpath("//*[contains(text(), 'Взаємодію успішно створено')]"));
 
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(0));
-        new WebDriverWait(driver, Duration.ofSeconds(5)).until(
-                ExpectedConditions.invisibilityOfElementLocated(
-                        By.xpath("//*[contains(text(), 'Взаємодію успішно створено')]")));
+        waitInvisible(By.xpath("//*[contains(text(), 'Взаємодію успішно створено')]"));
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1));
     }
 
     public void proceedToSync()
     {
-        WebElement elem = driver.findElement(NewEncounterPageLocators.proceedToSyncButtonXpath);
-        new WebDriverWait(driver, Duration.ofSeconds(5)).until(
-                ExpectedConditions.elementToBeClickable(elem));
-
-        elem.click();
-
+        waitClickable(NewEncounterPageLocators.proceedToSyncButtonXpath).click();
         driver.findElement(By.xpath("//*[text()='Продовжити']")).click();
     }
 }

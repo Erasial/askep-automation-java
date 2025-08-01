@@ -37,7 +37,7 @@ public class Main {
         Common common = new Common(driver);
 
         ArrayList<Entry> entries = common.fillEntries("Sheet1");
-        LocalTime time = LocalTime.of(13, 5);
+        LocalTime time = LocalTime.of(13, 55);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
 
 
