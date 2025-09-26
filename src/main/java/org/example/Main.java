@@ -27,26 +27,24 @@ public class Main {
     public static void main(String[] args) {
         WebDriver driver = new DriverInit().driver;
 
-        SearchPersonPage searchPersonPage = new SearchPersonPage(driver);
-        EpisodesPage episodesPage = new EpisodesPage(driver);
-        EncountersPage encountersPage = new EncountersPage(driver);
-        NewEncounterPage newEncounterPage = new NewEncounterPage(driver);
-        SyncFrame syncFrame = new SyncFrame(driver);
-        NewEpisodeFrame newEpisodeFrame = new NewEpisodeFrame(driver);
-        EndEpisodeFrame endEpisodeFrame = new EndEpisodeFrame(driver);
-        Common common = new Common(driver);
+        Common common                       = new Common(driver);
+        SyncFrame syncFrame                 = new SyncFrame(driver);
+        EpisodesPage episodesPage           = new EpisodesPage(driver);
+        EncountersPage encountersPage       = new EncountersPage(driver);
+        EndEpisodeFrame endEpisodeFrame     = new EndEpisodeFrame(driver);
+        NewEpisodeFrame newEpisodeFrame     = new NewEpisodeFrame(driver);
+        SearchPersonPage searchPersonPage   = new SearchPersonPage(driver);
+        NewEncounterPage newEncounterPage   = new NewEncounterPage(driver);
 
         ArrayList<Entry> entries = common.fillEntries("Sheet1");
-        LocalTime time = LocalTime.of(13, 55);
+        LocalTime time = LocalTime.of(12, 0);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
-
 
         for (int i = 0; i < entries.size(); i++) {
             Entry entry = entries.get(i);
 
             if (i > 0 && ChronoUnit.DAYS.between(entries.get(i - 1).getDate(), entry.getDate()) > 0)
                 time = LocalTime.of(10, 0);
-
 
             // filling variables from table
             String name = entry.getName();

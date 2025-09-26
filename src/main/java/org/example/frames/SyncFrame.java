@@ -14,9 +14,8 @@ public class SyncFrame extends BasePage {
 
     private void checkForPOOO()
     {
-        if (driver.findElement(By.xpath("//li[contains(text(), 'Packets out of order')]")).isDisplayed()) {
+        if (driver.findElement(By.xpath("//li[contains(text(), 'Packets out of order')]")).isDisplayed())
             driver.findElement(By.xpath("/html/body/div[5]/div/div[3]/button[1]")).click();
-        }
 
         waitClickable(NewEncounterPageLocators.saveButtonXpath).click();
         waitVisible(By.xpath("//*[contains(text(), 'Взаємодію успішно створено')]"));

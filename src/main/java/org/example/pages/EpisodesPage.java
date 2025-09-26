@@ -28,8 +28,8 @@ public class EpisodesPage extends BasePage{
             episodeName = " - " + tooth;
 
         List<WebElement> td = driver.findElements(By.xpath("//tr/td[3]"));
-        int i = 0;
 
+        int i = 0;
         while (!td.get(i).getText().contains(episodeName))
             i++;
 
