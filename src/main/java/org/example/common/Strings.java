@@ -3,6 +3,7 @@ package org.example.common;
 public class Strings {
     public static final String username = "neo";
     public static final String tableDir = "/home/" + username + "/Documents/askep_sorted.xlsx";
+    public static final String palliativeTableDir = "/home/" + username + "/Documents/palliative.xlsx";
 
     public static final String[] diagnosesWithoutTooth = {"K03.6", "Z01.2"};
     public static final String[] doNotEnd = {"K04.0", "K04.4", "K04.5", "K04.8", "K05.2", "K05.3", "K08.81", "K03.9", "K02.5", "Z01.2"};

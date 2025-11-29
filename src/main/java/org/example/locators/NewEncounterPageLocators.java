@@ -8,6 +8,7 @@ public class NewEncounterPageLocators {
     public static final By reasonInputId = By.id("input-114");
     public static final By operationInputId = By.id("input-130");
     public static final By prioritySelectId = By.id("input-152");
+    public static final By typeSelectId = By.id("input-76");
     public static final By diagnoseTabLinkXpath = By.xpath("//*[contains(text(), 'Діагнози')]");
     public static final By proceduresTabLinkXpath = By.xpath("//*[contains(text(), 'Процедури')]");
     public static final By diagnoseTypeSelectId = By.id("input-199");

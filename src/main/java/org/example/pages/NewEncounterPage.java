@@ -7,7 +7,9 @@ import org.openqa.selenium.interactions.Actions;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -87,6 +89,21 @@ public class NewEncounterPage extends BasePage {
 
     }
 
+    public void enterEncounterDatetime(LocalDate date, LocalTime time)
+    {
+        WebElement datetimeInput = driver.findElement(NewEncounterPageLocators.dateInputId);
+        String rightDate = date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        String rightTime = time.format(DateTimeFormatter.ofPattern("hh:mm"));
+
+        datetimeInput.sendKeys(rightDate + " " + rightTime);
+
+        int duration = 20;
+
+        driver.findElement(NewEncounterPageLocators.durationInputId).click();
+        driver.findElement(NewEncounterPageLocators.durationInputId).sendKeys(String.valueOf(duration));
+
+    }
+
     public void selectEncounterReason(String diagnose)
     {
         String reason;
@@ -107,6 +124,15 @@ public class NewEncounterPage extends BasePage {
         driver.findElement(NewEncounterPageLocators.operationInputId).sendKeys(Keys.ESCAPE);
     }
 
+    public void enterProcedureResult()
+    {
+        WebElement procedureResult = driver.findElement(By.xpath("//div[text()='Результат проведення процедури']/..//input[@placeholder='Оберіть']"));
+        procedureResult.click();
+        waitVisible(NewEncounterPageLocators.procedureSuccessButtonXpath);
+
+        common.findLast(NewEncounterPageLocators.procedureSuccessButtonXpath).click();
+    }
+
     public void changePriority()
     {
         Actions actions = new Actions(driver);
@@ -114,6 +140,12 @@ public class NewEncounterPage extends BasePage {
 
         driver.findElement(NewEncounterPageLocators.prioritySelectId).click();
         driver.findElement(By.xpath("//div[contains(text(), 'Плановий')]")).click();
+    }
+
+    public void changeType()
+    {
+        driver.findElement(NewEncounterPageLocators.typeSelectId).click();
+        driver.findElement(By.xpath("//div[contains(text(), 'за місцем')]")).click();
     }
 
     public void navToDiagnoseTab()
@@ -141,7 +173,7 @@ public class NewEncounterPage extends BasePage {
         WebElement proceduresTab = driver.findElement(NewEncounterPageLocators.proceduresTabLinkXpath);
         Actions actions = new Actions(driver);
         actions.scrollToElement(proceduresTab).perform();
-        driver.findElements(By.xpath("//i[@class='v-icon notranslate mdi mdi-chevron-right theme--light']")).get(2).click();
+//        driver.findElements(By.xpath("//i[@class='v-icon notranslate mdi mdi-chevron-right theme--light']")).get(2).click();
         proceduresTab.click();
     }
 
@@ -200,6 +232,6 @@ public class NewEncounterPage extends BasePage {
     public void proceedToSync()
     {
         waitClickable(NewEncounterPageLocators.proceedToSyncButtonXpath).click();
-        driver.findElement(By.xpath("//*[text()='Продовжити']")).click();
+//        driver.findElement(By.xpath("//*[text()='Продовжити']")).click();
     }
 }

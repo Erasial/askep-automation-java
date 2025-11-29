@@ -122,6 +122,59 @@ public class Common {
         return entries;
     }
 
+    public ArrayList<PalliativeEntry> palliativeReadTable(String sheetName) {
+        ArrayList<PalliativeEntry> entries = new ArrayList<>();
+
+        try
+        {
+            File file = new File(Strings.palliativeTableDir);   //creating a new file instance
+            FileInputStream fis = new FileInputStream(file);   //obtaining bytes from the file
+            XSSFWorkbook wb = new XSSFWorkbook(fis);
+            XSSFSheet sheet = wb.getSheet(sheetName);     //
+
+            for (Row row : sheet) {
+                Iterator<Cell> cellIterator = row.cellIterator(); //iterating over each column
+                if (row.getRowNum() == 0) {
+                    continue;
+                }
+                if (row.getCell(0) == null) {
+                    break;
+                }
+                String name = "";
+                String ref_link = "";
+                String encounter_link = "";
+
+                for (int i = 0; i < 3; i++) {
+                    Cell cell = cellIterator.next();
+                    String value = cell.getStringCellValue();
+
+                    switch (i) {
+                        case 0:
+                            name = value;
+                            break;
+                        case 1:
+                            ref_link = value;
+                            break;
+                        case 2:
+                            encounter_link = value;
+                            break;
+                    }
+                }
+
+                PalliativeEntry entry = new PalliativeEntry(name, ref_link, encounter_link);
+                entries.add(entry);
+            }
+            fis.close();
+            wb.close();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return entries;
+    }
+
     public String convertDate(String date) {
         try {
             LocalDate localDate = LocalDate.parse(date);
