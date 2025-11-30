@@ -93,7 +93,7 @@ public class NewEncounterPage extends BasePage {
     {
         WebElement datetimeInput = driver.findElement(NewEncounterPageLocators.dateInputId);
         String rightDate = date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-        String rightTime = time.format(DateTimeFormatter.ofPattern("hh:mm"));
+        String rightTime = time.format(DateTimeFormatter.ofPattern("HH:mm"));
 
         datetimeInput.sendKeys(rightDate + " " + rightTime);
 

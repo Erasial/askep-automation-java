@@ -28,9 +28,9 @@ public class MobilePalliative {
 
         LocalDate dateInitial = LocalDate.of(2025, 11, 1);
 
-        LocalDate date = LocalDate.of(2025, 11, 29);
+        LocalDate date = LocalDate.of(2025, 11, 1);
 
-        int offset = 0;
+        int offset = 7;
         boolean limitHit = false;
 
         LocalTime time = LocalTime.of(11, 0).plusMinutes(offset * 30);
@@ -42,7 +42,7 @@ public class MobilePalliative {
                 date = date.plusDays(1);
             }
             while (date.getMonthValue() == LocalDate.now().getMonthValue()) {
-                System.out.printf("%s -- %s", entry.getName(), date.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+                System.out.printf("%s -- %s %s\n", entry.getName(), date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")), time.format(DateTimeFormatter.ofPattern("HH:mm")));
                 driver.get(entry.getRefLink());
                 driver.get(entry.getEncounterLink());
 
