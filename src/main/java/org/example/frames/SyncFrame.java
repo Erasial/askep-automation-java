@@ -4,6 +4,10 @@ import org.example.locators.NewEncounterPageLocators;
 import org.example.pages.BasePage;
 import org.openqa.selenium.*;
 import org.example.locators.SyncFrameLocators;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 public class SyncFrame extends BasePage {
 
@@ -23,13 +27,21 @@ public class SyncFrame extends BasePage {
     }
 
     public void syncData() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
         try {
-            waitVisible(SyncFrameLocators.syncDataButtonXpath);
+            // 1. Wait until the button is actually ready to receive a click
+            WebElement button = wait.until(ExpectedConditions.elementToBeClickable(SyncFrameLocators.syncDataButtonXpath));
+
+            // 2. Click it
+            button.click();
         } catch (TimeoutException e) {
             checkForPOOO();
+        } catch (ElementClickInterceptedException e) {
+            // 3. Fallback: If still intercepted, try a JS Click
+            WebElement button = driver.findElement(SyncFrameLocators.syncDataButtonXpath);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", button);
         }
-
-        driver.findElement(SyncFrameLocators.syncDataButtonXpath).click();
 
         waitVisible(SyncFrameLocators.successAlertClass);
     }

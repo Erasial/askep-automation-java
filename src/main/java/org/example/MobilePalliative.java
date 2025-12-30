@@ -26,21 +26,18 @@ public class MobilePalliative {
 
         ArrayList<PalliativeEntry> entries = common.palliativeReadTable("palliative");
 
-        LocalDate dateInitial = LocalDate.of(2025, 11, 1);
+        LocalDate dateInitial = LocalDate.of(2025, 12, 6);
 
-        LocalDate date = LocalDate.of(2025, 11, 1);
+        LocalDate date = LocalDate.of(2025, 12, 6);
 
-        int offset = 7;
-        boolean limitHit = false;
+        int offset = 9;
 
         LocalTime time = LocalTime.of(11, 0).plusMinutes(offset * 30);
-
-        for (int i = offset; i < entries.size(); i++) {
+        System.out.println(entries.size());
+        for (int i = offset; i < entries.size() - 4; i++) { // TODO might wanna change -4
             PalliativeEntry entry = entries.get(i);
-            if (i > 5 && !limitHit) {
-                limitHit = true;
+            if (i > 5)
                 date = date.plusDays(1);
-            }
             while (date.getMonthValue() == LocalDate.now().getMonthValue()) {
                 System.out.printf("%s -- %s %s\n", entry.getName(), date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")), time.format(DateTimeFormatter.ofPattern("HH:mm")));
                 driver.get(entry.getRefLink());
@@ -57,6 +54,7 @@ public class MobilePalliative {
 
                 date = date.plusDays(7);
             }
+
             date = dateInitial;
             time = time.plusMinutes(30);
         }
