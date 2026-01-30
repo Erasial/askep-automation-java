@@ -37,7 +37,7 @@ public class Main {
         NewEncounterPage newEncounterPage   = new NewEncounterPage(driver);
 
         ArrayList<Entry> entries = common.fillEntries("Sheet1");
-        LocalTime time = LocalTime.of(12, 25);
+        LocalTime time = LocalTime.of(11, 20);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
 
         for (int i = 0; i < entries.size(); i++) {

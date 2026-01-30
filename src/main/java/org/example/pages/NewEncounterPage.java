@@ -232,6 +232,6 @@ public class NewEncounterPage extends BasePage {
     public void proceedToSync()
     {
         waitClickable(NewEncounterPageLocators.proceedToSyncButtonXpath).click();
-//        driver.findElement(By.xpath("//*[text()='Продовжити']")).click();
+        driver.findElement(By.xpath("//*[text()='Продовжити']")).click();
     }
 }
